@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Document xmlns="urn:iso:std:iso:20022:tech:xsd:pain.001.001.03">
+  <CstmrCdtTrfInitn>
+    <GrpHdr>
+      <MsgId>DEMO-INVALID-ADDRESS</MsgId>
+      <CreDtTm>2026-09-29T10:30:00</CreDtTm>
+      <NbOfTxs>1</NbOfTxs>
+      <CtrlSum>125.50</CtrlSum>
+      <InitgPty><Nm>Demo s.r.o.</Nm></InitgPty>
+    </GrpHdr>
+    <PmtInf>
+      <PmtInfId>PAYMENT-GROUP-INVALID</PmtInfId>
+      <PmtMtd>TRF</PmtMtd>
+      <NbOfTxs>1</NbOfTxs>
+      <CtrlSum>125.50</CtrlSum>
+      <PmtTpInf><SvcLvl><Cd>SEPA</Cd></SvcLvl></PmtTpInf>
+      <ReqdExctnDt>2026-10-01</ReqdExctnDt>
+      <Dbtr><Nm>Demo s.r.o.</Nm></Dbtr>
+      <DbtrAcct><Id><IBAN>SK3112000000198742637541</IBAN></Id></DbtrAcct>
+      <DbtrAgt><FinInstnId><BIC>TATRSKBX</BIC></FinInstnId></DbtrAgt>
+      <ChrgBr>SLEV</ChrgBr>
+      <CdtTrfTxInf>
+        <PmtId><EndToEndId>E2E-INVALID-ADDRESS</EndToEndId></PmtId>
+        <Amt><InstdAmt Ccy="EUR">125.50</InstdAmt></Amt>
+        <CdtrAgt><FinInstnId><BIC>KOMASK2X</BIC></FinInstnId></CdtrAgt>
+        <Cdtr>
+          <Nm>Example Supplier s.r.o.</Nm>
+          <PstlAdr>
+            <AdrLine>Hlavná 10</AdrLine>
+            <AdrLine>811 01 Bratislava, Slovensko</AdrLine>
+          </PstlAdr>
+        </Cdtr>
+        <CdtrAcct><Id><IBAN>SK8975000000000012345671</IBAN></Id></CdtrAcct>
+      </CdtTrfTxInf>
+    </PmtInf>
+  </CstmrCdtTrfInitn>
+</Document>

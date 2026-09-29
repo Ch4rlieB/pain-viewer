@@ -1,0 +1,38 @@
+{
+  "key": "pain-viewer",
+  "title": {
+    "cs": "Čtečka a validátor pain.001",
+    "en": "pain.001 reader and validator",
+    "de": "pain.001-Leser und -Validator",
+    "sk": "Čítačka a validátor pain.001"
+  },
+  "description": {
+    "cs": "Lokální zobrazení a validace příkazů ISO 20022 pain.001 podle XSD a pravidel konkrétních bank.",
+    "en": "Local display and validation of ISO 20022 pain.001 orders against XSD and bank-specific rules.",
+    "de": "Lokale Anzeige und Validierung von ISO-20022-pain.001-Aufträgen anhand von XSD- und bankspezifischen Regeln.",
+    "sk": "Lokálne zobrazenie a validácia príkazov ISO 20022 pain.001 podľa XSD a pravidiel konkrétnych bánk."
+  },
+  "robots": "index, follow",
+  "autor": {
+    "nickName": "Ch4rlieB",
+    "name": "Kája z Norska",
+    "url": "https://charlieblog.eu/autor"
+  },
+  "article": {
+    "url": "https://charlieblog.eu/produkty",
+    "name": {
+      "cs": "další nástroje pro ABRA Flexi",
+      "en": "more tools for ABRA Flexi",
+      "de": "weitere Werkzeuge für ABRA Flexi",
+      "sk": "ďalšie nástroje pre ABRA Flexi"
+    }
+  },
+  "version": {
+    "current": "0.1.0"
+  },
+  "layout": {
+    "displayDescription": false,
+    "displayAdvert": false,
+    "displayNews": false
+  }
+}

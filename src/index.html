@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="cs">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Lokální čtečka a validátor ISO 20022 pain.001 podle XSD a pravidel bank.">
+  <meta name="color-scheme" content="light dark">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: blob:; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; img-src 'self' data:; connect-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'">
+  <title>Pain Viewer</title>
+  <link rel="icon" href="assets/pain-viewer-favicon.ico" sizes="any">
+  <link rel="icon" href="assets/pain-viewer-icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="toolbar">
+    <a class="brand" href="./" aria-label="Pain Viewer">
+      <span class="brand-mark" aria-hidden="true">P.001</span>
+      <span>Pain Viewer</span>
+    </a>
+    <div class="toolbar-actions">
+      <label class="sr-only" for="language">Language</label>
+      <select id="language" class="select-compact" aria-label="Language">
+        <option value="cs">Česky</option>
+        <option value="sk">Slovensky</option>
+        <option value="en">English</option>
+        <option value="de">Deutsch</option>
+      </select>
+      <button id="theme-toggle" class="icon-button" type="button" aria-label="Přepnout motiv" title="Přepnout motiv">
+        <span aria-hidden="true">◐</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="page-shell">
+    <section id="intro" class="intro">
+      <p class="eyebrow">ISO 20022 · pain.001</p>
+      <h1 data-i18n="headline">Zkontrolujte platební příkaz před importem do banky</h1>
+      <p class="lede" data-i18n="intro">Soubor se zobrazí a ověří přímo ve vašem prohlížeči. Nikam se neodesílá.</p>
+    </section>
+
+    <section id="drop-zone" class="drop-zone" tabindex="0" role="button" aria-describedby="drop-help">
+      <input id="file-input" type="file" accept=".xml,application/xml,text/xml" hidden>
+      <div class="drop-icon" aria-hidden="true">XML</div>
+      <h2 data-i18n="dropTitle">Vyberte soubor pain.001</h2>
+      <p data-i18n="dropText">Přetáhněte XML sem, nebo ho vyberte z disku.</p>
+      <button id="choose-file" class="button button-primary" type="button" data-i18n="chooseFile">Vybrat XML</button>
+      <small id="drop-help" data-i18n="privacy">Zpracování probíhá pouze lokálně · maximálně 10 MB</small>
+    </section>
+
+    <div id="fatal" class="notice notice-error" role="alert" hidden></div>
+
+    <section id="workspace" hidden>
+      <div class="document-bar">
+        <div class="document-identity">
+          <span class="file-badge" aria-hidden="true">XML</span>
+          <div>
+            <strong id="file-name"></strong>
+            <span id="file-meta" class="muted"></span>
+          </div>
+        </div>
+        <button id="load-another" class="button" type="button" data-i18n="loadAnother">Načíst jiný soubor</button>
+      </div>
+
+      <section class="validation-section" aria-labelledby="validation-title">
+        <div class="section-heading validation-heading">
+          <div>
+            <p class="eyebrow" data-i18n="checks">Kontroly</p>
+            <h2 id="validation-title" data-i18n="validationTitle">Výsledek validace</h2>
+          </div>
+          <div class="profile-control">
+            <label for="bank-profile" data-i18n="bankProfile">Pravidla banky</label>
+            <select id="bank-profile"></select>
+          </div>
+        </div>
+
+        <div class="status-grid">
+          <article id="xml-status" class="status-card"></article>
+          <article id="xsd-status" class="status-card"></article>
+          <article id="bank-status" class="status-card"></article>
+        </div>
+
+        <div id="profile-source" class="profile-source"></div>
+        <div id="findings" class="findings"></div>
+      </section>
+
+      <section class="data-section" aria-labelledby="data-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow" data-i18n="loadedData">Načtená data</p>
+            <h2 id="data-title" data-i18n="documentContent">Obsah příkazu</h2>
+          </div>
+        </div>
+        <div class="tabs" role="tablist" aria-label="Document views">
+          <button class="tab is-active" role="tab" aria-selected="true" aria-controls="panel-overview" data-tab="overview" data-i18n="tabOverview">Přehled</button>
+          <button class="tab" role="tab" aria-selected="false" aria-controls="panel-payments" data-tab="payments" data-i18n="tabPayments">Platby</button>
+          <button class="tab" role="tab" aria-selected="false" aria-controls="panel-fields" data-tab="fields" data-i18n="tabFields">Všechna data</button>
+          <button class="tab" role="tab" aria-selected="false" aria-controls="panel-xml" data-tab="xml" data-i18n="tabXml">XML</button>
+        </div>
+        <div id="panel-overview" class="tab-panel" role="tabpanel"></div>
+        <div id="panel-payments" class="tab-panel" role="tabpanel" hidden></div>
+        <div id="panel-fields" class="tab-panel" role="tabpanel" hidden></div>
+        <div id="panel-xml" class="tab-panel" role="tabpanel" hidden></div>
+      </section>
+    </section>
+  </main>
+
+  <footer>
+    <span>Pain Viewer</span>
+    <span data-i18n="footer">Soukromé zpracování v prohlížeči · bez odesílání dat</span>
+  </footer>
+
+  <script src="vendor/xmllint-wasm-bundle.js" defer></script>
+  <script src="data/schemas-data.js" defer></script>
+  <script src="core.js" defer></script>
+  <script src="banks/kbsk-2026.js" defer></script>
+  <script src="app.js" defer></script>
+</body>
+</html>
