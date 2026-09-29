@@ -10,7 +10,9 @@ The first release:
 - validates `pain.001.001.03` and `pain.001.001.09` with their XSDs locally
   through WebAssembly;
 - applies optional bank profiles independently from XSD validation;
-- includes the **KB Slovensko — rules effective from 20 June 2026** profile;
+- includes profiles for **KB Slovensko — rules effective from 20 June 2026**,
+  **Fio banka — API documentation version 1.9**, and **Česká spořitelna —
+  rules effective from 14 November 2026**;
 - is responsive, keyboard-accessible and supports Czech, Slovak, English and
   German plus light/dark mode;
 - produces a self-contained static `dist/` directory for upload to a website.
@@ -84,6 +86,39 @@ including the rules described around section 2.77:
 
 The profile is a pre-import aid, not a guarantee that a bank will accept a
 payment. Bank rules and supported formats can change.
+
+## Fio banka profile scope
+
+The profile is based on *Fio API Bankovnictví, version 1.9 (16 October 2025)*.
+For `pain.001` payment orders, that document lists `pain.001.001.03` and
+`pain.001.001.09` and permits imports only in EUR. The profile is selected
+automatically for debtor-agent BIC `FIOBCZPP` and checks both constraints.
+
+The same document also describes `pain.008.001.02`. That identifier is a SEPA
+direct-debit initiation message, not version 8 of `pain.001`; parsing and
+displaying it therefore requires a separate document model and is outside the
+current `pain.001` viewer scope.
+
+## Česká spořitelna profile scope
+
+The profile is based on Česká spořitelna's announcement *Změna formátu plateb –
+strukturovaná adresa příjemce* and the linked 2026 technical packages. It is
+selected automatically for debtor-agent BIC `GIBACZPX` and checks rules taking
+effect on 14 November 2026:
+
+- `pain.001.001.03` requires the creditor postal address with `Ctry` and one or
+  two `AdrLine` elements; structured address elements are not allowed by the
+  bank-specific `.03` schema;
+- `pain.001.001.09` requires structured creditor address fields `TwnNm` and
+  `Ctry`;
+- for `.09`, missing `StrtNm`, `BldgNb` or `PstCd` produces a recommendation,
+  not an error.
+
+The `.03` rule is intentionally different from `.09`: Česká spořitelna's 2026
+FAQ and restricted `.03` schema still represent the creditor address as
+`Ctry` plus one or two free-text `AdrLine` elements. The viewer shows an
+informational note for this accepted legacy form so it is not confused with
+the structured `TwnNm` rule for `.09`.
 
 ## Privacy and security
 

@@ -27,6 +27,8 @@ for (const file of ['index.html', 'styles.css', 'core.js', 'app.js']) {
   await cp(join(root, 'src', file), join(dist, file));
 }
 await cp(join(root, 'src', 'banks', 'kbsk-2026.js'), join(dist, 'banks', 'kbsk-2026.js'));
+await cp(join(root, 'src', 'banks', 'fio-cz-2025.js'), join(dist, 'banks', 'fio-cz-2025.js'));
+await cp(join(root, 'src', 'banks', 'csas-2026.js'), join(dist, 'banks', 'csas-2026.js'));
 await cp(join(root, 'vendor', 'xmllint-wasm-bundle.js'), join(dist, 'vendor', 'xmllint-wasm-bundle.js'));
 await cp(join(root, 'assets'), join(dist, 'assets'), { recursive: true });
 await cp(join(root, 'examples'), join(dist, 'examples'), { recursive: true });
@@ -51,6 +53,8 @@ const versionedAssets = [
   'data/schemas-data.js',
   'core.js',
   'banks/kbsk-2026.js',
+  'banks/fio-cz-2025.js',
+  'banks/csas-2026.js',
   'app.js',
 ];
 const indexPath = join(dist, 'index.html');
