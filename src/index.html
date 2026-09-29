@@ -69,7 +69,10 @@
           </div>
           <div class="profile-control">
             <label for="bank-profile" data-i18n="bankProfile">Pravidla banky</label>
-            <select id="bank-profile"></select>
+            <div class="profile-control-row">
+              <select id="bank-profile"></select>
+              <button id="show-bank-rules" class="button button-secondary" type="button" data-i18n="showBankRules" disabled>Zobrazit pravidla</button>
+            </div>
           </div>
         </div>
 
@@ -82,6 +85,17 @@
         <div id="profile-source" class="profile-source"></div>
         <div id="findings" class="findings"></div>
       </section>
+
+      <dialog id="bank-rules-dialog" class="rules-dialog" aria-labelledby="bank-rules-title">
+        <div class="rules-dialog-header">
+          <div>
+            <p class="eyebrow" data-i18n="bankRulesOverview">Přehled profilu</p>
+            <h2 id="bank-rules-title">Pravidla banky</h2>
+          </div>
+          <button id="close-bank-rules" class="icon-button" type="button" data-i18n-aria-label="close" data-i18n-title="close" aria-label="Zavřít" title="Zavřít">×</button>
+        </div>
+        <div id="bank-rules-content"></div>
+      </dialog>
 
       <section class="data-section" aria-labelledby="data-title">
         <div class="section-heading">

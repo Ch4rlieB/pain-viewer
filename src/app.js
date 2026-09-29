@@ -20,6 +20,35 @@
     }
   };
 
+  Object.assign(ui.cs, {
+    showBankRules: 'Zobrazit pravidla', bankRulesOverview: 'Přehled profilu', close: 'Zavřít',
+    supportedVersions: 'Podporované verze', validationRules: 'Kontrolovaná pravidla',
+    ruleNoProblem: 'Bez zjištěného problému', ruleError: 'Nesplněno', ruleWarning: 'Doporučení', ruleInfo: 'Informace',
+    rulesNotListed: 'Tento profil zatím nemá uživatelský přehled pravidel.',
+    ruleGuideNote: 'Přehled vzniká přímo z aktivních pravidel profilu. Přijetí souboru vždy závisí také na aktuálních podmínkách banky.',
+  });
+  Object.assign(ui.sk, {
+    showBankRules: 'Zobraziť pravidlá', bankRulesOverview: 'Prehľad profilu', close: 'Zavrieť',
+    supportedVersions: 'Podporované verzie', validationRules: 'Kontrolované pravidlá',
+    ruleNoProblem: 'Bez zisteného problému', ruleError: 'Nesplnené', ruleWarning: 'Odporúčanie', ruleInfo: 'Informácia',
+    rulesNotListed: 'Tento profil zatiaľ nemá používateľský prehľad pravidiel.',
+    ruleGuideNote: 'Prehľad vzniká priamo z aktívnych pravidiel profilu. Prijatie súboru vždy závisí aj od aktuálnych podmienok banky.',
+  });
+  Object.assign(ui.en, {
+    showBankRules: 'Show rules', bankRulesOverview: 'Profile overview', close: 'Close',
+    supportedVersions: 'Supported versions', validationRules: 'Checked rules',
+    ruleNoProblem: 'No problem found', ruleError: 'Not met', ruleWarning: 'Recommendation', ruleInfo: 'Information',
+    rulesNotListed: 'This profile does not yet provide a user-facing rules overview.',
+    ruleGuideNote: 'The overview comes directly from the profile’s active rules. File acceptance also depends on the bank’s current terms.',
+  });
+  Object.assign(ui.de, {
+    showBankRules: 'Regeln anzeigen', bankRulesOverview: 'Profilübersicht', close: 'Schließen',
+    supportedVersions: 'Unterstützte Versionen', validationRules: 'Geprüfte Regeln',
+    ruleNoProblem: 'Kein Problem festgestellt', ruleError: 'Nicht erfüllt', ruleWarning: 'Empfehlung', ruleInfo: 'Information',
+    rulesNotListed: 'Für dieses Profil gibt es noch keine benutzerfreundliche Regelübersicht.',
+    ruleGuideNote: 'Die Übersicht stammt direkt aus den aktiven Profilregeln. Die Annahme der Datei hängt auch von den aktuellen Bedingungen der Bank ab.',
+  });
+
   const xsdText = {
     cs: {
       invalidValue: 'Pole „{0}“ obsahuje neplatnou hodnotu „{1}“. {2}', missingAttribute: 'V poli „{0}“ chybí povinný atribut „{1}“.', unexpectedElement: 'Pole „{0}“ je na tomto místě neočekávané. Očekává se „{1}“; zkontrolujte také pořadí elementů.', missingElement: 'V části „{0}“ chybí povinné pole „{1}“.', pattern: 'Pole „{0}“ obsahuje hodnotu „{1}“ v neplatném formátu. Očekávaný vzor: {2}.', technical: 'Technický detail', generic: 'XSD kontrola našla problém: {0}', noHint: 'Hodnota neodpovídá datovému typu {0}.',
@@ -59,7 +88,8 @@
   const elements = Object.fromEntries([
     'language', 'theme-toggle', 'drop-zone', 'file-input', 'choose-file', 'fatal', 'workspace',
     'file-name', 'file-meta', 'load-another', 'bank-profile', 'xml-status', 'xsd-status',
-    'bank-status', 'profile-source', 'findings', 'panel-overview', 'panel-payments',
+    'bank-status', 'profile-source', 'findings', 'show-bank-rules', 'bank-rules-dialog',
+    'bank-rules-title', 'bank-rules-content', 'close-bank-rules', 'panel-overview', 'panel-payments',
     'panel-fields', 'panel-xml', 'intro',
   ].map((id) => [id.replace(/-([a-z])/g, (_, letter) => letter.toUpperCase()), document.getElementById(id)]));
 
@@ -161,11 +191,14 @@
   function applyTranslations() {
     document.documentElement.lang = state.language;
     document.querySelectorAll('[data-i18n]').forEach((node) => { node.textContent = t(node.dataset.i18n); });
+    document.querySelectorAll('[data-i18n-aria-label]').forEach((node) => { node.setAttribute('aria-label', t(node.dataset.i18nAriaLabel)); });
+    document.querySelectorAll('[data-i18n-title]').forEach((node) => { node.title = t(node.dataset.i18nTitle); });
     elements.language.value = state.language;
     elements.themeToggle.setAttribute('aria-label', t('theme'));
     elements.themeToggle.title = t('theme');
     renderProfileOptions();
     if (state.model) renderEverything();
+    else renderBankRules();
   }
 
   function renderProfileOptions() {
@@ -180,6 +213,56 @@
     const icon = status === 'valid' ? '✓' : status === 'invalid' ? '!' : status === 'pending' ? '…' : 'i';
     element.dataset.status = status;
     element.innerHTML = `<div class="status-head"><span class="status-icon" aria-hidden="true">${icon}</span><span>${escapeHtml(title)}</span></div><p>${escapeHtml(note)}</p>`;
+  }
+
+  function ruleSeverity(findings) {
+    if (findings.some((finding) => finding.severity === 'error')) return 'error';
+    if (findings.some((finding) => finding.severity === 'warning')) return 'warning';
+    if (findings.some((finding) => finding.severity === 'info')) return 'info';
+    return 'valid';
+  }
+
+  function shortVersion(namespace) {
+    const match = String(namespace).match(/pain\.001\.001\.\d+$/);
+    return match ? match[0] : namespace;
+  }
+
+  function renderBankRules() {
+    const profile = profiles.find((item) => item.id === state.selectedProfileId);
+    elements.showBankRules.disabled = !profile;
+    if (!profile) {
+      elements.bankRulesTitle.textContent = t('bankTitle');
+      elements.bankRulesContent.innerHTML = '';
+      if (elements.bankRulesDialog.open) elements.bankRulesDialog.close();
+      return;
+    }
+
+    elements.bankRulesTitle.textContent = localized(profile.label);
+    const versions = (profile.supportedNamespaces || []).map((namespace) =>
+      `<span class="version-chip">${escapeHtml(shortVersion(namespace))}</span>`
+    ).join('');
+    const rules = (profile.rules || []).map((rule) => {
+      const findings = state.bankFindings.filter((finding) => finding.ruleId === rule.id);
+      const severity = ruleSeverity(findings);
+      const stateLabel = severity === 'error' ? t('ruleError') : severity === 'warning' ? t('ruleWarning') : severity === 'info' ? t('ruleInfo') : t('ruleNoProblem');
+      const icon = severity === 'error' || severity === 'warning' ? '!' : severity === 'info' ? 'i' : '✓';
+      return `<li class="rule-card" data-status="${severity}">
+        <span class="rule-status-icon" aria-hidden="true">${icon}</span>
+        <div class="rule-card-title">${escapeHtml(localized(rule.label))}</div>
+        <span class="rule-card-state">${escapeHtml(stateLabel)}</span>
+        <span class="rule-card-code">${escapeHtml(rule.id)}</span>
+      </li>`;
+    }).join('');
+    elements.bankRulesContent.innerHTML = `
+      <p class="rules-profile-description">${escapeHtml(localized(profile.description))}</p>
+      <div class="rules-meta">
+        <div class="rules-meta-row"><span class="rules-meta-label">${escapeHtml(t('supportedVersions'))}</span><div class="version-list">${versions}</div></div>
+        <div class="rules-meta-row"><span class="rules-meta-label">${escapeHtml(t('source'))}</span><a href="${escapeHtml(profile.source.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(profile.source.title)}</a></div>
+        <div class="rules-meta-row"><span class="rules-meta-label">${escapeHtml(t('effective'))}</span><span>${escapeHtml(profile.source.effectiveFrom)}</span></div>
+      </div>
+      <h3 class="rules-list-title">${escapeHtml(t('validationRules'))}</h3>
+      ${rules ? `<ul class="rules-list">${rules}</ul>` : `<p class="muted">${escapeHtml(t('rulesNotListed'))}</p>`}
+      <p class="rules-disclaimer">${escapeHtml(t('ruleGuideNote'))}</p>`;
   }
 
   function renderStatuses() {
@@ -200,6 +283,7 @@
     if (!profile) {
       setStatus(elements.bankStatus, 'warning', t('bankTitle'), t('bankOff'));
       elements.profileSource.innerHTML = escapeHtml(t('profileVersionNote'));
+      renderBankRules();
       return;
     }
     const errors = state.bankFindings.filter((item) => item.severity === 'error').length;
@@ -209,6 +293,7 @@
       ? `<strong>${escapeHtml(t('profileAuto', state.detectedDebtorBic))}</strong> `
       : '';
     elements.profileSource.innerHTML = `${automaticNote}${escapeHtml(t('source'))}: <a href="${escapeHtml(profile.source.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(profile.source.title)}</a> · ${escapeHtml(t('effective'))} ${escapeHtml(profile.source.effectiveFrom)}`;
+    renderBankRules();
   }
 
   function renderFindings() {
@@ -452,6 +537,14 @@
     runBankValidation();
     renderStatuses();
     renderFindings();
+  });
+  elements.showBankRules.addEventListener('click', () => {
+    renderBankRules();
+    elements.bankRulesDialog.showModal();
+  });
+  elements.closeBankRules.addEventListener('click', () => elements.bankRulesDialog.close());
+  elements.bankRulesDialog.addEventListener('click', (event) => {
+    if (event.target === elements.bankRulesDialog) elements.bankRulesDialog.close();
   });
   document.querySelectorAll('.tab').forEach((tab) => tab.addEventListener('click', () => {
     document.querySelectorAll('.tab').forEach((item) => {

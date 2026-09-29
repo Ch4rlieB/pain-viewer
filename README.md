@@ -64,15 +64,24 @@ Copy `src/banks/kbsk-2026.js` and keep the same small contract:
 {
   id: 'bank-profile-id',
   label: { cs: '…', sk: '…', en: '…', de: '…' },
+  description: { cs: '…', sk: '…', en: '…', de: '…' },
   source: { title: '…', url: 'https://…', effectiveFrom: 'YYYY-MM-DD' },
   detection: { debtorAgentBics: ['BANKBICX'] },
   supportedNamespaces: ['urn:iso:std:iso:20022:tech:xsd:pain.…'],
+  rules: [{
+    id: 'BANK-RULE-ID',
+    label: { cs: '…', sk: '…', en: '…', de: '…' }
+  }],
   validate(model) { return findings; }
 }
 ```
 
 Each finding has a stable rule ID, severity (`error`, `warning` or `info`), a
 localized message, and an optional XML path, payment ID and transaction ID.
+The validator references the same rule objects exposed in `rules`; the online
+rules dialog therefore lists the active profile definitions rather than a
+separately maintained copy. Keep rule IDs stable because the dialog uses them
+to match validation findings to the loaded document.
 `debtorAgentBics` contains the 8- or 11-character BIC/SWIFT codes of the bank
 that owns the profile. The viewer uses `DbtrAgt/FinInstnId/BIC` (or `BICFI`)
 to select a profile automatically. An unknown, missing or mixed-bank BIC leaves

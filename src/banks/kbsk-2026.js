@@ -12,6 +12,18 @@
     'urn:iso:std:iso:20022:tech:xsd:pain.001.001.04',
   ];
 
+  const RULES = {
+    namespace: { id: 'KBSK-NAMESPACE', label: { cs: 'Podporovaná verze pain.001', sk: 'Podporovaná verzia pain.001', en: 'Supported pain.001 version', de: 'Unterstützte pain.001-Version' } },
+    versionNote: { id: 'KBSK-VERSION-NOTE', label: { cs: 'Rozsah kontroly podle verze', sk: 'Rozsah kontroly podľa verzie', en: 'Version-specific validation scope', de: 'Versionsabhängiger Prüfumfang' } },
+    addressRequired: { id: 'KBSK-ADDR-REQUIRED', label: { cs: 'Povinná strukturovaná adresa', sk: 'Povinná štruktúrovaná adresa', en: 'Required structured address', de: 'Erforderliche strukturierte Adresse' } },
+    addressPartial: { id: 'KBSK-ADDR-PARTIAL', label: { cs: 'Úplnost uvedené strukturované adresy', sk: 'Úplnosť uvedenej štruktúrovanej adresy', en: 'Completeness of a provided structured address', de: 'Vollständigkeit einer angegebenen strukturierten Adresse' } },
+    addressLine: { id: 'KBSK-ADDR-ADRLINE', label: { cs: 'Volný AdrLine nenahrazuje strukturovanou adresu', sk: 'Voľný AdrLine nenahrádza štruktúrovanú adresu', en: 'Free-text AdrLine does not replace a structured address', de: 'Freier AdrLine ersetzt keine strukturierte Adresse' } },
+    sepaControlSum: { id: 'KBSK-SEPA-CTRLSUM', label: { cs: 'Kontrolní součet pro SEPA platby', sk: 'Kontrolný súčet pre SEPA platby', en: 'Control sum for SEPA payments', de: 'Kontrollsumme für SEPA-Zahlungen' } },
+    sepaBic: { id: 'KBSK-SEPA-BIC', label: { cs: 'Identifikace banky příjemce u SEPA platby', sk: 'Identifikácia banky príjemcu pri SEPA platbe', en: 'Creditor-agent identification for SEPA', de: 'Identifikation der Empfängerbank bei SEPA' } },
+    agentName: { id: 'KBSK-AGENT-NAME', label: { cs: 'Název banky příjemce, pokud chybí BIC', sk: 'Názov banky príjemcu, ak chýba BIC', en: 'Creditor-agent name when BIC is missing', de: 'Name der Empfängerbank bei fehlendem BIC' } },
+    usAddress: { id: 'KBSK-US-ADDRESS', label: { cs: 'Doplňující adresa pro USD platbu do USA', sk: 'Doplňujúca adresa pre USD platbu do USA', en: 'Additional address data for USD payments to the USA', de: 'Zusätzliche Adressdaten für USD-Zahlungen in die USA' } },
+  };
+
   const words = {
     role: {
       debtor: { cs: 'plátce', sk: 'platiteľa', en: 'debtor', de: 'Zahlungspflichtiger' },
@@ -45,9 +57,9 @@
     };
   }
 
-  function addFinding(findings, ruleId, severity, message, path, group, transaction) {
+  function addFinding(findings, rule, severity, message, path, group, transaction) {
     findings.push({
-      ruleId,
+      ruleId: rule.id,
       severity,
       message,
       path: path || '',
@@ -82,7 +94,7 @@
     if (absent.length) {
       addFinding(
         findings,
-        required ? 'KBSK-ADDR-REQUIRED' : 'KBSK-ADDR-PARTIAL',
+        required ? RULES.addressRequired : RULES.addressPartial,
         'error',
         localized((language) => {
           const intro = {
@@ -102,7 +114,7 @@
     if (address && address.addressLines.length) {
       addFinding(
         findings,
-        'KBSK-ADDR-ADRLINE',
+        RULES.addressLine,
         absent.length ? 'error' : 'warning',
         {
           cs: 'AdrLine nenahrazuje strukturovanou adresu. KB SK požaduje samostatné prvky adresy; AdrLine nedoporučuje používat.',
@@ -125,7 +137,7 @@
   function validate(model) {
     const findings = [];
     if (!NAMESPACES.includes(model.namespace)) {
-      addFinding(findings, 'KBSK-NAMESPACE', 'error', {
+      addFinding(findings, RULES.namespace, 'error', {
         cs: 'KB SK podle použité dokumentace přijímá pouze pain.001.001.02, .03 a .04.',
         sk: 'KB SK podľa použitej dokumentácie prijíma iba pain.001.001.02, .03 a .04.',
         en: 'According to the referenced documentation, KB SK accepts only pain.001.001.02, .03 and .04.',
@@ -134,7 +146,7 @@
       return findings;
     }
     if (!model.namespace.endsWith('.03')) {
-      addFinding(findings, 'KBSK-VERSION-NOTE', 'warning', {
+      addFinding(findings, RULES.versionNote, 'warning', {
         cs: 'Detailní tabulky použité dokumentace KB SK platí pouze pro pain.001.001.03; kontrola této verze je proto orientační.',
         sk: 'Detailné tabuľky použitej dokumentácie KB SK platia iba pre pain.001.001.03; kontrola tejto verzie je preto orientačná.',
         en: 'The detailed tables in the referenced KB SK document apply only to pain.001.001.03, so this version is checked on a best-effort basis.',
@@ -146,7 +158,7 @@
       const groupIsSepa = ['SEPA', 'INST'].includes(String(group.serviceLevel || '').toUpperCase())
         || group.transactions.some((transaction) => isSepa(transaction, group));
       if (groupIsSepa && !model.header.controlSum) {
-        addFinding(findings, 'KBSK-SEPA-CTRLSUM', 'error', {
+        addFinding(findings, RULES.sepaControlSum, 'error', {
           cs: 'Pro SEPA platby KB SK požaduje kontrolní součet GrpHdr/CtrlSum.',
           sk: 'Pre SEPA platby KB SK požaduje kontrolný súčet GrpHdr/CtrlSum.',
           en: 'KB SK requires GrpHdr/CtrlSum for SEPA payments.',
@@ -174,7 +186,7 @@
         if (sepa) {
           const localSkId = agent && agent.otherId && (!creditorCountry || creditorCountry === 'SK');
           if (!agent || (!agent.bic && !localSkId)) {
-            addFinding(findings, 'KBSK-SEPA-BIC', 'error', {
+            addFinding(findings, RULES.sepaBic, 'error', {
               cs: 'Pro SEPA platbu je povinný BIC banky příjemce; u platby v rámci Slovenska může být použit lokální identifikátor Othr.',
               sk: 'Pre SEPA platbu je povinný BIC banky príjemcu; pri platbe v rámci Slovenska môže byť použitý lokálny identifikátor Othr.',
               en: 'The creditor-agent BIC is mandatory for SEPA; a local Othr identifier may be used for a payment within Slovakia.',
@@ -183,7 +195,7 @@
           }
         } else if (!agent || !agent.bic) {
           if (!agent || !agent.name) {
-            addFinding(findings, 'KBSK-AGENT-NAME', 'error', {
+            addFinding(findings, RULES.agentName, 'error', {
               cs: 'Pokud u zahraniční platby není BIC, musí být uveden název banky příjemce (CdtrAgt/FinInstnId/Nm).',
               sk: 'Ak pri zahraničnej platbe nie je BIC, musí byť uvedený názov banky príjemcu (CdtrAgt/FinInstnId/Nm).',
               en: 'When a foreign payment has no BIC, the creditor-agent name (CdtrAgt/FinInstnId/Nm) is required.',
@@ -219,7 +231,7 @@
           if (recommended.length) {
             addFinding(
               findings,
-              'KBSK-US-ADDRESS',
+              RULES.usAddress,
               'warning',
               localized((language) => ({
                 cs: `Pro platbu v USD do USA KB SK požaduje doplnit: ${list(recommended, language)}.`,
@@ -261,6 +273,7 @@
       debtorAgentBics: ['KOMASK2X'],
     },
     supportedNamespaces: NAMESPACES,
+    rules: Object.values(RULES),
     validate,
   };
 });

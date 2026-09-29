@@ -10,6 +10,16 @@
   const VERSION_09 = 'urn:iso:std:iso:20022:tech:xsd:pain.001.001.09';
   const NAMESPACES = [VERSION_03, VERSION_09];
 
+  const RULES = {
+    namespace: { id: 'CSAS-NAMESPACE', label: { cs: 'Podporovaná verze pain.001', sk: 'Podporovaná verzia pain.001', en: 'Supported pain.001 version', de: 'Unterstützte pain.001-Version' } },
+    legacyAddress: { id: 'CSAS-03-LEGACY-ADDRESS', label: { cs: 'Ve verzi .03 se používá země a volné řádky adresy', sk: 'Vo verzii .03 sa používa krajina a voľné riadky adresy', en: 'Version .03 uses country and free-text address lines', de: 'Version .03 verwendet Land und freie Adresszeilen' } },
+    creditorAddress03: { id: 'CSAS-03-CREDITOR-ADDRESS', label: { cs: 'Adresa příjemce ve verzi .03 obsahuje Ctry a AdrLine', sk: 'Adresa príjemcu vo verzii .03 obsahuje Ctry a AdrLine', en: 'The .03 creditor address contains Ctry and AdrLine', de: 'Die .03-Empfängeradresse enthält Ctry und AdrLine' } },
+    structuredNotAllowed03: { id: 'CSAS-03-STRUCTURED-NOT-ALLOWED', label: { cs: 'Verze .03 nepovoluje strukturované prvky adresy', sk: 'Verzia .03 nepovoľuje štruktúrované prvky adresy', en: 'Version .03 does not permit structured address elements', de: 'Version .03 erlaubt keine strukturierten Adresselemente' } },
+    addressLineLimit03: { id: 'CSAS-03-ADRLINE-LIMIT', label: { cs: 'Verze .03 povoluje nejvýše dva AdrLine', sk: 'Verzia .03 povoľuje najviac dva AdrLine', en: 'Version .03 permits at most two AdrLine elements', de: 'Version .03 erlaubt höchstens zwei AdrLine-Elemente' } },
+    creditorAddress09: { id: 'CSAS-09-CREDITOR-ADDRESS', label: { cs: 'Adresa příjemce ve verzi .09 obsahuje město a zemi', sk: 'Adresa príjemcu vo verzii .09 obsahuje mesto a krajinu', en: 'The .09 creditor address contains town and country', de: 'Die .09-Empfängeradresse enthält Ort und Land' } },
+    recommendedAddress09: { id: 'CSAS-09-ADDRESS-RECOMMENDED', label: { cs: 'Doporučené prvky adresy ve verzi .09', sk: 'Odporúčané prvky adresy vo verzii .09', en: 'Recommended address elements in version .09', de: 'Empfohlene Adresselemente in Version .09' } },
+  };
+
   const fieldLabels = {
     street: { cs: 'ulice (StrtNm)', sk: 'ulica (StrtNm)', en: 'street (StrtNm)', de: 'Straße (StrtNm)' },
     buildingNumber: { cs: 'číslo domu (BldgNb)', sk: 'číslo domu (BldgNb)', en: 'building number (BldgNb)', de: 'Hausnummer (BldgNb)' },
@@ -27,9 +37,9 @@
     };
   }
 
-  function addFinding(findings, ruleId, severity, message, path, group, transaction) {
+  function addFinding(findings, rule, severity, message, path, group, transaction) {
     findings.push({
-      ruleId,
+      ruleId: rule.id,
       severity,
       message,
       path: path || '',
@@ -48,7 +58,7 @@
     if (!address || !address.country) missing.push('Ctry');
     if (!address || !address.addressLines || !address.addressLines.length) missing.push('AdrLine');
     if (missing.length) {
-      addFinding(findings, 'CSAS-03-CREDITOR-ADDRESS', 'error', localized((language) => ({
+      addFinding(findings, RULES.creditorAddress03, 'error', localized((language) => ({
         cs: `Pro pain.001.001.03 Česká spořitelna vyžaduje poštovní adresu příjemce se zemí (Ctry) a alespoň jedním řádkem adresy (AdrLine). Chybí: ${missing.join(', ')}.`,
         sk: `Pre pain.001.001.03 Česká sporiteľňa vyžaduje poštovú adresu príjemcu s krajinou (Ctry) a aspoň jedným riadkom adresy (AdrLine). Chýba: ${missing.join(', ')}.`,
         en: `For pain.001.001.03, Česká spořitelna requires the creditor postal address with country (Ctry) and at least one address line (AdrLine). Missing: ${missing.join(', ')}.`,
@@ -65,7 +75,7 @@
       ['region', 'CtrySubDvsn'],
     ].filter(([field]) => address[field]).map(([, tag]) => tag);
     if (structuredFields.length) {
-      addFinding(findings, 'CSAS-03-STRUCTURED-NOT-ALLOWED', 'error', localized((language) => ({
+      addFinding(findings, RULES.structuredNotAllowed03, 'error', localized((language) => ({
         cs: `Bankovní formát České spořitelny pain.001.001.03 povoluje v PstlAdr pouze Ctry a AdrLine. Odstraňte strukturované prvky: ${structuredFields.join(', ')}.`,
         sk: `Bankový formát Českej sporiteľne pain.001.001.03 povoľuje v PstlAdr iba Ctry a AdrLine. Odstráňte štruktúrované prvky: ${structuredFields.join(', ')}.`,
         en: `Česká spořitelna's pain.001.001.03 format permits only Ctry and AdrLine inside PstlAdr. Remove these structured elements: ${structuredFields.join(', ')}.`,
@@ -74,7 +84,7 @@
     }
 
     if (address.addressLines.length > 2) {
-      addFinding(findings, 'CSAS-03-ADRLINE-LIMIT', 'error', {
+      addFinding(findings, RULES.addressLineLimit03, 'error', {
         cs: `Česká spořitelna povoluje v pain.001.001.03 nejvýše dva prvky AdrLine; uvedeno je ${address.addressLines.length}.`,
         sk: `Česká sporiteľňa povoľuje v pain.001.001.03 najviac dva prvky AdrLine; uvedených je ${address.addressLines.length}.`,
         en: `Česká spořitelna permits at most two AdrLine elements in pain.001.001.03; ${address.addressLines.length} are present.`,
@@ -90,7 +100,7 @@
     if (!address || !address.country) missingRequired.push('Ctry');
 
     if (missingRequired.length) {
-      addFinding(findings, 'CSAS-09-CREDITOR-ADDRESS', 'error', localized((language) => ({
+      addFinding(findings, RULES.creditorAddress09, 'error', localized((language) => ({
         cs: `Pro pain.001.001.09 Česká spořitelna vyžaduje ve strukturované adrese příjemce město (TwnNm) a zemi (Ctry). Chybí: ${missingRequired.join(', ')}.`,
         sk: `Pre pain.001.001.09 Česká sporiteľňa vyžaduje v štruktúrovanej adrese príjemcu mesto (TwnNm) a krajinu (Ctry). Chýba: ${missingRequired.join(', ')}.`,
         en: `For pain.001.001.09, Česká spořitelna requires town (TwnNm) and country (Ctry) in the structured creditor address. Missing: ${missingRequired.join(', ')}.`,
@@ -101,7 +111,7 @@
 
     const recommended = ['street', 'buildingNumber', 'postcode'].filter((field) => !address[field]);
     if (!recommended.length) return;
-    addFinding(findings, 'CSAS-09-ADDRESS-RECOMMENDED', 'warning', localized((language) => {
+    addFinding(findings, RULES.recommendedAddress09, 'warning', localized((language) => {
       const labels = recommended.map((field) => fieldLabels[field][language]).join(', ');
       return {
         cs: `Česká spořitelna doporučuje pro spolehlivé zpracování doplnit také: ${labels}.`,
@@ -116,7 +126,7 @@
     const findings = [];
     const firstGroup = model.groups[0] || { index: 1 };
     if (!NAMESPACES.includes(model.namespace)) {
-      addFinding(findings, 'CSAS-NAMESPACE', 'error', {
+      addFinding(findings, RULES.namespace, 'error', {
         cs: 'Česká spořitelna podle použité dokumentace přijímá SEPA příkazy pain.001 ve verzích pain.001.001.03 a pain.001.001.09.',
         sk: 'Česká sporiteľňa podľa použitej dokumentácie prijíma SEPA príkazy pain.001 vo verziách pain.001.001.03 a pain.001.001.09.',
         en: 'According to the referenced documentation, Česká spořitelna accepts pain.001 SEPA orders as pain.001.001.03 or pain.001.001.09.',
@@ -126,7 +136,7 @@
     }
 
     if (model.namespace === VERSION_03) {
-      addFinding(findings, 'CSAS-03-LEGACY-ADDRESS', 'info', {
+      addFinding(findings, RULES.legacyAddress, 'info', {
         cs: 'Tento soubor používá starší pain.001.001.03. Česká spořitelna v této verzi výslovně přijímá adresu příjemce jako Ctry a jeden až dva volné řádky AdrLine; strukturované TwnNm vyžaduje až u pain.001.001.09.',
         sk: 'Tento súbor používa starší pain.001.001.03. Česká sporiteľňa v tejto verzii výslovne prijíma adresu príjemcu ako Ctry a jeden až dva voľné riadky AdrLine; štruktúrované TwnNm vyžaduje až pri pain.001.001.09.',
         en: 'This file uses the older pain.001.001.03. For this version, Česká spořitelna explicitly accepts the creditor address as Ctry plus one or two free-text AdrLine elements; structured TwnNm is required for pain.001.001.09.',
@@ -166,6 +176,7 @@
       debtorAgentBics: ['GIBACZPX'],
     },
     supportedNamespaces: NAMESPACES,
+    rules: Object.values(RULES),
     validate,
   };
 });
