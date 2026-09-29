@@ -122,6 +122,9 @@ h1 { margin: 0; font-size: clamp(2rem, 5vw, 3.25rem); line-height: 1.08; letter-
 .finding-badge { align-self: start; padding: 2px 7px; border-radius: 999px; color: var(--text-secondary); background: var(--bg-hover); font: 700 .72rem var(--mono); }
 .finding p { margin: 0; }
 .finding-meta { grid-column: 2; display: flex; flex-wrap: wrap; gap: 5px 14px; color: var(--text-muted); font: .76rem var(--mono); overflow-wrap: anywhere; }
+.finding-technical { margin-top: 8px; color: var(--text-muted); font-size: .78rem; }
+.finding-technical summary { cursor: pointer; }
+.finding-technical code { display: block; margin-top: 6px; padding: 8px; border-radius: 5px; background: var(--bg-hover); font-family: var(--mono); overflow-wrap: anywhere; }
 .all-clear { padding: 16px; border: 1px solid var(--success-border); border-radius: var(--radius); color: var(--success); background: var(--success-bg); }
 
 .tabs { display: flex; gap: 3px; padding: 4px; border: 1px solid var(--border); border-radius: 9px; background: var(--bg-surface); overflow-x: auto; }

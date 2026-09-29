@@ -7,7 +7,8 @@ The first release:
 
 - reads `pain.001` XML and displays its summary, payment groups, transactions,
   every leaf value and formatted source XML;
-- validates `pain.001.001.03` with its XSD locally through WebAssembly;
+- validates `pain.001.001.03` and `pain.001.001.09` with their XSDs locally
+  through WebAssembly;
 - applies optional bank profiles independently from XSD validation;
 - includes the **KB Slovensko — rules effective from 20 June 2026** profile;
 - is responsive, keyboard-accessible and supports Czech, Slovak, English and
@@ -35,8 +36,9 @@ The application deliberately keeps these results separate:
 1. **XML parsing** — well-formed XML, expected `Document` root and a `pain.001`
    namespace.
 2. **XSD validation** — exact validation for namespaces with a bundled schema.
-   The initial release bundles `pain.001.001.03`; other versions are still
-   displayed but clearly report that no XSD is bundled.
+   The project bundles the generic `pain.001.001.03` and `pain.001.001.09`
+   schemas; other versions are still displayed but clearly report that no XSD
+   is bundled.
 3. **Bank profile** — additional rules that an XSD cannot express. A profile
    never hides loaded data and never changes the XSD result.
 
@@ -49,6 +51,7 @@ Copy `src/banks/kbsk-2026.js` and keep the same small contract:
   id: 'bank-profile-id',
   label: { cs: '…', sk: '…', en: '…', de: '…' },
   source: { title: '…', url: 'https://…', effectiveFrom: 'YYYY-MM-DD' },
+  detection: { debtorAgentBics: ['BANKBICX'] },
   supportedNamespaces: ['urn:iso:std:iso:20022:tech:xsd:pain.…'],
   validate(model) { return findings; }
 }
@@ -56,9 +59,14 @@ Copy `src/banks/kbsk-2026.js` and keep the same small contract:
 
 Each finding has a stable rule ID, severity (`error`, `warning` or `info`), a
 localized message, and an optional XML path, payment ID and transaction ID.
-Register the new script in `src/index.html`, add focused tests, then run
-`npm run check`. This separation is intentional: on the next bank document,
-the parser and UI do not need to change.
+`debtorAgentBics` contains the 8- or 11-character BIC/SWIFT codes of the bank
+that owns the profile. The viewer uses `DbtrAgt/FinInstnId/BIC` (or `BICFI`)
+to select a profile automatically. An unknown, missing or mixed-bank BIC leaves
+the profile unselected; users can still select one manually.
+
+Register the new script in `src/index.html`, add focused tests, then run `npm
+run check`. This separation is intentional: on the next bank document, the
+parser and UI do not need to change.
 
 ## KB Slovensko profile scope
 
@@ -79,7 +87,10 @@ payment. Bank rules and supported formats can change.
 
 ## Privacy and security
 
-- There is no upload endpoint, analytics, cookie, CDN or runtime network call.
+- There is no upload endpoint, analytics, CDN or runtime network call.
+- One functional `pain_viewer_language` cookie remembers the selected language
+  for one year. It contains only the language code and is not used for tracking.
+- The light/dark preference is stored locally in the browser.
 - XML containing `DOCTYPE` is rejected before parsing/validation.
 - Dynamic values are HTML-escaped before display.
 - The upload limit is 10 MiB to keep browser validation predictable.

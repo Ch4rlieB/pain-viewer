@@ -1,36 +1,41 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Document xmlns="urn:iso:std:iso:20022:tech:xsd:pain.001.001.03">
+<Document xmlns="urn:iso:std:iso:20022:tech:xsd:pain.001.001.09">
   <CstmrCdtTrfInitn>
     <GrpHdr>
-      <MsgId>DEMO-INVALID-ADDRESS</MsgId>
+      <MsgId>DEMO-V09-2026-001</MsgId>
       <CreDtTm>2026-09-29T10:30:00</CreDtTm>
       <NbOfTxs>1</NbOfTxs>
       <CtrlSum>125.50</CtrlSum>
       <InitgPty><Nm>Demo s.r.o.</Nm></InitgPty>
     </GrpHdr>
     <PmtInf>
-      <PmtInfId>PAYMENT-GROUP-INVALID</PmtInfId>
+      <PmtInfId>PAYMENT-GROUP-001</PmtInfId>
       <PmtMtd>TRF</PmtMtd>
+      <BtchBookg>true</BtchBookg>
       <NbOfTxs>1</NbOfTxs>
       <CtrlSum>125.50</CtrlSum>
       <PmtTpInf><SvcLvl><Cd>SEPA</Cd></SvcLvl></PmtTpInf>
-      <ReqdExctnDt>2026-10-01</ReqdExctnDt>
+      <ReqdExctnDt><Dt>2026-10-01</Dt></ReqdExctnDt>
       <Dbtr><Nm>Demo s.r.o.</Nm></Dbtr>
-      <DbtrAcct><Id><IBAN>SK3112000000198742637541</IBAN></Id></DbtrAcct>
-      <DbtrAgt><FinInstnId><BIC>KOMASK2X</BIC></FinInstnId></DbtrAgt>
+      <DbtrAcct><Id><IBAN>CZ6508000000192000145399</IBAN></Id></DbtrAcct>
+      <DbtrAgt><FinInstnId><BICFI>KOMBCZPP</BICFI></FinInstnId></DbtrAgt>
       <ChrgBr>SLEV</ChrgBr>
       <CdtTrfTxInf>
-        <PmtId><EndToEndId>E2E-INVALID-ADDRESS</EndToEndId></PmtId>
+        <PmtId><InstrId>INSTR-001</InstrId><EndToEndId>E2E-001</EndToEndId></PmtId>
         <Amt><InstdAmt Ccy="EUR">125.50</InstdAmt></Amt>
-        <CdtrAgt><FinInstnId><BIC>TATRSKBX</BIC></FinInstnId></CdtrAgt>
+        <CdtrAgt><FinInstnId><BICFI>TATRSKBX</BICFI></FinInstnId></CdtrAgt>
         <Cdtr>
           <Nm>Example Supplier s.r.o.</Nm>
           <PstlAdr>
-            <AdrLine>Hlavná 10</AdrLine>
-            <AdrLine>811 01 Bratislava, Slovensko</AdrLine>
+            <StrtNm>Hlavná</StrtNm>
+            <BldgNb>10</BldgNb>
+            <PstCd>81101</PstCd>
+            <TwnNm>Bratislava</TwnNm>
+            <Ctry>SK</Ctry>
           </PstlAdr>
         </Cdtr>
         <CdtrAcct><Id><IBAN>SK8975000000000012345671</IBAN></Id></CdtrAcct>
+        <RmtInf><Ustrd>Faktúra 2026-001</Ustrd></RmtInf>
       </CdtTrfTxInf>
     </PmtInf>
   </CstmrCdtTrfInitn>

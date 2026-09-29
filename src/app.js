@@ -4,19 +4,43 @@
   const core = window.PainReaderCore;
   const profiles = window.PainReaderBankProfiles || [];
   const languages = ['cs', 'sk', 'en', 'de'];
+  const languageCookieName = 'pain_viewer_language';
   const ui = {
     cs: {
-      headline: 'Zkontrolujte platební příkaz před importem do banky', intro: 'Soubor se zobrazí a ověří přímo ve vašem prohlížeči. Nikam se neodesílá.', dropTitle: 'Vyberte soubor pain.001', dropText: 'Přetáhněte XML sem, nebo ho vyberte z disku.', chooseFile: 'Vybrat XML', privacy: 'Zpracování probíhá pouze lokálně · maximálně 10 MB', loadAnother: 'Načíst jiný soubor', checks: 'Kontroly', validationTitle: 'Výsledek validace', bankProfile: 'Pravidla banky', loadedData: 'Načtená data', documentContent: 'Obsah příkazu', tabOverview: 'Přehled', tabPayments: 'Platby', tabFields: 'Všechna data', tabXml: 'XML', footer: 'Soukromé zpracování v prohlížeči · bez odesílání dat', xmlTitle: 'Formát XML', xmlOk: 'XML je dobře strukturované a používá namespace pain.001.', xsdTitle: 'XSD schéma', xsdPending: 'Probíhá přesná kontrola struktury…', xsdOk: 'Dokument odpovídá schématu {0}.', xsdInvalid: 'XSD našlo {0} chyb.', xsdUnsupported: 'Pro verzi {0} zatím není přibalené ověřené XSD. Data jsou přesto zobrazena.', xsdUnavailable: 'Validační engine se nepodařilo načíst.', bankTitle: 'Pravidla banky', bankOff: 'Není vybraný žádný bankovní profil.', bankOk: 'Všechna pravidla vybraného profilu prošla.', bankProblems: '{0} chyb · {1} varování', noProfile: 'Bez bankovního profilu', source: 'Zdroj pravidel', effective: 'účinnost od', noFindings: 'Kontroly nenašly žádný problém.', messageId: 'ID zprávy', created: 'Vytvořeno', transactions: 'Transakce', total: 'Celkem', namespace: 'Namespace / verze', initiatingParty: 'Iniciující strana', declaredTransactions: 'Deklarovaný počet transakcí', controlSum: 'Kontrolní součet', paymentGroup: 'Platební skupina', method: 'Metoda', serviceLevel: 'Úroveň služby', executionDate: 'Datum provedení', debtor: 'Plátce', debtorAccount: 'Účet plátce', debtorAgent: 'Banka plátce', creditor: 'Příjemce', creditorAccount: 'Účet příjemce', creditorAgent: 'Banka příjemce', amount: 'Částka', endToEnd: 'EndToEnd ID', instructionId: 'Instruction ID', purpose: 'Účel', remittance: 'Zpráva pro příjemce', address: 'Adresa', path: 'XML cesta', value: 'Hodnota', filter: 'Filtrovat cestu nebo hodnotu…', copyXml: 'Kopírovat XML', copied: 'Zkopírováno', empty: 'neuvedeno', fileTooLarge: 'Soubor je větší než povolených 10 MB.', doctype: 'XML s deklarací DOCTYPE není z bezpečnostních důvodů podporováno.', invalidXml: 'Soubor není platné XML.', invalidRoot: 'Kořenovým prvkem musí být Document.', invalidNamespace: 'Soubor nepoužívá namespace ISO 20022 pain.001.', missingInitiation: 'V dokumentu chybí CstmrCdtTrfInitn.', readError: 'Soubor se nepodařilo načíst.', validationError: 'XSD validaci se nepodařilo dokončit.', theme: 'Přepnout světlý/tmavý motiv', size: 'Velikost', profileVersionNote: 'Bankovní pravidla jsou oddělená od XSD kontroly a nemění načtená data.'
+      headline: 'Zkontrolujte platební příkaz před importem do banky', intro: 'Soubor se zobrazí a ověří přímo ve vašem prohlížeči. Nikam se neodesílá.', dropTitle: 'Vyberte soubor pain.001', dropText: 'Přetáhněte XML sem, nebo ho vyberte z disku.', chooseFile: 'Vybrat XML', privacy: 'Zpracování probíhá pouze lokálně · maximálně 10 MB', loadAnother: 'Načíst jiný soubor', checks: 'Kontroly', validationTitle: 'Výsledek validace', bankProfile: 'Pravidla banky', loadedData: 'Načtená data', documentContent: 'Obsah příkazu', tabOverview: 'Přehled', tabPayments: 'Platby', tabFields: 'Všechna data', tabXml: 'XML', footer: 'Soukromé zpracování v prohlížeči · bez odesílání dat', xmlTitle: 'Formát XML', xmlOk: 'XML je dobře strukturované a používá namespace pain.001.', xsdTitle: 'XSD schéma', xsdPending: 'Probíhá přesná kontrola struktury…', xsdOk: 'Dokument odpovídá schématu {0}.', xsdInvalid: 'XSD našlo {0} chyb.', xsdUnsupported: 'Pro verzi {0} zatím není přibalené ověřené XSD. Data jsou přesto zobrazena.', xsdUnavailable: 'Validační engine se nepodařilo načíst.', bankTitle: 'Pravidla banky', bankOff: 'Není vybraný žádný bankovní profil.', bankOk: 'Všechna pravidla vybraného profilu prošla.', bankProblems: '{0} chyb · {1} varování', noProfile: 'Bez bankovního profilu', source: 'Zdroj pravidel', effective: 'účinnost od', noFindings: 'Kontroly nenašly žádný problém.', messageId: 'ID zprávy', created: 'Vytvořeno', transactions: 'Transakce', total: 'Celkem', namespace: 'Namespace / verze', initiatingParty: 'Iniciující strana', declaredTransactions: 'Deklarovaný počet transakcí', controlSum: 'Kontrolní součet', paymentGroup: 'Platební skupina', method: 'Metoda', serviceLevel: 'Úroveň služby', executionDate: 'Datum provedení', debtor: 'Plátce', debtorAccount: 'Účet plátce', debtorAgent: 'Banka plátce', creditor: 'Příjemce', creditorAccount: 'Účet příjemce', creditorAgent: 'Banka příjemce', amount: 'Částka', endToEnd: 'EndToEnd ID', instructionId: 'Instruction ID', purpose: 'Účel', remittance: 'Zpráva pro příjemce', address: 'Adresa', path: 'XML cesta', value: 'Hodnota', filter: 'Filtrovat cestu nebo hodnotu…', copyXml: 'Kopírovat XML', copied: 'Zkopírováno', empty: 'neuvedeno', fileTooLarge: 'Soubor je větší než povolených 10 MB.', doctype: 'XML s deklarací DOCTYPE není z bezpečnostních důvodů podporováno.', invalidXml: 'Soubor není platné XML.', invalidRoot: 'Kořenovým prvkem musí být Document.', invalidNamespace: 'Soubor nepoužívá namespace ISO 20022 pain.001.', missingInitiation: 'V dokumentu chybí CstmrCdtTrfInitn.', readError: 'Soubor se nepodařilo načíst.', validationError: 'XSD validaci se nepodařilo dokončit.', theme: 'Přepnout světlý/tmavý motiv', size: 'Velikost', profileVersionNote: 'Bankovní pravidla jsou oddělená od XSD kontroly a nemění načtená data.', profileAuto: 'Profil byl automaticky vybrán podle BIC banky plátce: {0}.'
     },
     sk: {
-      headline: 'Skontrolujte platobný príkaz pred importom do banky', intro: 'Súbor sa zobrazí a overí priamo vo vašom prehliadači. Nikam sa neodosiela.', dropTitle: 'Vyberte súbor pain.001', dropText: 'Pretiahnite XML sem alebo ho vyberte z disku.', chooseFile: 'Vybrať XML', privacy: 'Spracovanie prebieha iba lokálne · maximálne 10 MB', loadAnother: 'Načítať iný súbor', checks: 'Kontroly', validationTitle: 'Výsledok validácie', bankProfile: 'Pravidlá banky', loadedData: 'Načítané údaje', documentContent: 'Obsah príkazu', tabOverview: 'Prehľad', tabPayments: 'Platby', tabFields: 'Všetky údaje', tabXml: 'XML', footer: 'Súkromné spracovanie v prehliadači · bez odosielania údajov', xmlTitle: 'Formát XML', xmlOk: 'XML je správne štruktúrované a používa namespace pain.001.', xsdTitle: 'XSD schéma', xsdPending: 'Prebieha presná kontrola štruktúry…', xsdOk: 'Dokument zodpovedá schéme {0}.', xsdInvalid: 'XSD našlo {0} chýb.', xsdUnsupported: 'Pre verziu {0} zatiaľ nie je pribalené overené XSD. Údaje sú napriek tomu zobrazené.', xsdUnavailable: 'Validačný engine sa nepodarilo načítať.', bankTitle: 'Pravidlá banky', bankOff: 'Nie je vybraný žiadny bankový profil.', bankOk: 'Všetky pravidlá vybraného profilu prešli.', bankProblems: '{0} chýb · {1} varovaní', noProfile: 'Bez bankového profilu', source: 'Zdroj pravidiel', effective: 'účinnosť od', noFindings: 'Kontroly nenašli žiadny problém.', messageId: 'ID správy', created: 'Vytvorené', transactions: 'Transakcie', total: 'Celkom', namespace: 'Namespace / verzia', initiatingParty: 'Iniciujúca strana', declaredTransactions: 'Deklarovaný počet transakcií', controlSum: 'Kontrolný súčet', paymentGroup: 'Platobná skupina', method: 'Metóda', serviceLevel: 'Úroveň služby', executionDate: 'Dátum vykonania', debtor: 'Platiteľ', debtorAccount: 'Účet platiteľa', debtorAgent: 'Banka platiteľa', creditor: 'Príjemca', creditorAccount: 'Účet príjemcu', creditorAgent: 'Banka príjemcu', amount: 'Suma', endToEnd: 'EndToEnd ID', instructionId: 'Instruction ID', purpose: 'Účel', remittance: 'Správa pre príjemcu', address: 'Adresa', path: 'XML cesta', value: 'Hodnota', filter: 'Filtrovať cestu alebo hodnotu…', copyXml: 'Kopírovať XML', copied: 'Skopírované', empty: 'neuvedené', fileTooLarge: 'Súbor je väčší ako povolených 10 MB.', doctype: 'XML s deklaráciou DOCTYPE nie je z bezpečnostných dôvodov podporované.', invalidXml: 'Súbor nie je platné XML.', invalidRoot: 'Koreňovým prvkom musí byť Document.', invalidNamespace: 'Súbor nepoužíva namespace ISO 20022 pain.001.', missingInitiation: 'V dokumente chýba CstmrCdtTrfInitn.', readError: 'Súbor sa nepodarilo načítať.', validationError: 'XSD validáciu sa nepodarilo dokončiť.', theme: 'Prepnúť svetlý/tmavý motív', size: 'Veľkosť', profileVersionNote: 'Bankové pravidlá sú oddelené od XSD kontroly a nemenia načítané údaje.'
+      headline: 'Skontrolujte platobný príkaz pred importom do banky', intro: 'Súbor sa zobrazí a overí priamo vo vašom prehliadači. Nikam sa neodosiela.', dropTitle: 'Vyberte súbor pain.001', dropText: 'Pretiahnite XML sem alebo ho vyberte z disku.', chooseFile: 'Vybrať XML', privacy: 'Spracovanie prebieha iba lokálne · maximálne 10 MB', loadAnother: 'Načítať iný súbor', checks: 'Kontroly', validationTitle: 'Výsledok validácie', bankProfile: 'Pravidlá banky', loadedData: 'Načítané údaje', documentContent: 'Obsah príkazu', tabOverview: 'Prehľad', tabPayments: 'Platby', tabFields: 'Všetky údaje', tabXml: 'XML', footer: 'Súkromné spracovanie v prehliadači · bez odosielania údajov', xmlTitle: 'Formát XML', xmlOk: 'XML je správne štruktúrované a používa namespace pain.001.', xsdTitle: 'XSD schéma', xsdPending: 'Prebieha presná kontrola štruktúry…', xsdOk: 'Dokument zodpovedá schéme {0}.', xsdInvalid: 'XSD našlo {0} chýb.', xsdUnsupported: 'Pre verziu {0} zatiaľ nie je pribalené overené XSD. Údaje sú napriek tomu zobrazené.', xsdUnavailable: 'Validačný engine sa nepodarilo načítať.', bankTitle: 'Pravidlá banky', bankOff: 'Nie je vybraný žiadny bankový profil.', bankOk: 'Všetky pravidlá vybraného profilu prešli.', bankProblems: '{0} chýb · {1} varovaní', noProfile: 'Bez bankového profilu', source: 'Zdroj pravidiel', effective: 'účinnosť od', noFindings: 'Kontroly nenašli žiadny problém.', messageId: 'ID správy', created: 'Vytvorené', transactions: 'Transakcie', total: 'Celkom', namespace: 'Namespace / verzia', initiatingParty: 'Iniciujúca strana', declaredTransactions: 'Deklarovaný počet transakcií', controlSum: 'Kontrolný súčet', paymentGroup: 'Platobná skupina', method: 'Metóda', serviceLevel: 'Úroveň služby', executionDate: 'Dátum vykonania', debtor: 'Platiteľ', debtorAccount: 'Účet platiteľa', debtorAgent: 'Banka platiteľa', creditor: 'Príjemca', creditorAccount: 'Účet príjemcu', creditorAgent: 'Banka príjemcu', amount: 'Suma', endToEnd: 'EndToEnd ID', instructionId: 'Instruction ID', purpose: 'Účel', remittance: 'Správa pre príjemcu', address: 'Adresa', path: 'XML cesta', value: 'Hodnota', filter: 'Filtrovať cestu alebo hodnotu…', copyXml: 'Kopírovať XML', copied: 'Skopírované', empty: 'neuvedené', fileTooLarge: 'Súbor je väčší ako povolených 10 MB.', doctype: 'XML s deklaráciou DOCTYPE nie je z bezpečnostných dôvodov podporované.', invalidXml: 'Súbor nie je platné XML.', invalidRoot: 'Koreňovým prvkom musí byť Document.', invalidNamespace: 'Súbor nepoužíva namespace ISO 20022 pain.001.', missingInitiation: 'V dokumente chýba CstmrCdtTrfInitn.', readError: 'Súbor sa nepodarilo načítať.', validationError: 'XSD validáciu sa nepodarilo dokončiť.', theme: 'Prepnúť svetlý/tmavý motív', size: 'Veľkosť', profileVersionNote: 'Bankové pravidlá sú oddelené od XSD kontroly a nemenia načítané údaje.', profileAuto: 'Profil bol automaticky vybraný podľa BIC banky platiteľa: {0}.'
     },
     en: {
-      headline: 'Check a payment order before importing it into your bank', intro: 'The file is displayed and validated entirely in your browser. It is never uploaded.', dropTitle: 'Choose a pain.001 file', dropText: 'Drop XML here or select it from your device.', chooseFile: 'Choose XML', privacy: 'Processed locally only · maximum 10 MB', loadAnother: 'Load another file', checks: 'Checks', validationTitle: 'Validation result', bankProfile: 'Bank rules', loadedData: 'Loaded data', documentContent: 'Order contents', tabOverview: 'Overview', tabPayments: 'Payments', tabFields: 'All data', tabXml: 'XML', footer: 'Private in-browser processing · no data upload', xmlTitle: 'XML format', xmlOk: 'The XML is well-formed and uses a pain.001 namespace.', xsdTitle: 'XSD schema', xsdPending: 'Checking the exact structure…', xsdOk: 'The document conforms to schema {0}.', xsdInvalid: 'XSD found {0} errors.', xsdUnsupported: 'No verified XSD is bundled for version {0} yet. The data is still shown.', xsdUnavailable: 'The validation engine could not be loaded.', bankTitle: 'Bank rules', bankOff: 'No bank profile is selected.', bankOk: 'All rules in the selected profile passed.', bankProblems: '{0} errors · {1} warnings', noProfile: 'No bank profile', source: 'Rules source', effective: 'effective from', noFindings: 'The checks found no problems.', messageId: 'Message ID', created: 'Created', transactions: 'Transactions', total: 'Total', namespace: 'Namespace / version', initiatingParty: 'Initiating party', declaredTransactions: 'Declared transactions', controlSum: 'Control sum', paymentGroup: 'Payment group', method: 'Method', serviceLevel: 'Service level', executionDate: 'Execution date', debtor: 'Debtor', debtorAccount: 'Debtor account', debtorAgent: 'Debtor agent', creditor: 'Creditor', creditorAccount: 'Creditor account', creditorAgent: 'Creditor agent', amount: 'Amount', endToEnd: 'EndToEnd ID', instructionId: 'Instruction ID', purpose: 'Purpose', remittance: 'Remittance information', address: 'Address', path: 'XML path', value: 'Value', filter: 'Filter path or value…', copyXml: 'Copy XML', copied: 'Copied', empty: 'not provided', fileTooLarge: 'The file is larger than the 10 MB limit.', doctype: 'XML containing a DOCTYPE declaration is not supported for security reasons.', invalidXml: 'The file is not valid XML.', invalidRoot: 'The root element must be Document.', invalidNamespace: 'The file does not use an ISO 20022 pain.001 namespace.', missingInitiation: 'CstmrCdtTrfInitn is missing from the document.', readError: 'The file could not be read.', validationError: 'XSD validation could not be completed.', theme: 'Toggle light/dark theme', size: 'Size', profileVersionNote: 'Bank rules are separate from XSD validation and never change the loaded data.'
+      headline: 'Check a payment order before importing it into your bank', intro: 'The file is displayed and validated entirely in your browser. It is never uploaded.', dropTitle: 'Choose a pain.001 file', dropText: 'Drop XML here or select it from your device.', chooseFile: 'Choose XML', privacy: 'Processed locally only · maximum 10 MB', loadAnother: 'Load another file', checks: 'Checks', validationTitle: 'Validation result', bankProfile: 'Bank rules', loadedData: 'Loaded data', documentContent: 'Order contents', tabOverview: 'Overview', tabPayments: 'Payments', tabFields: 'All data', tabXml: 'XML', footer: 'Private in-browser processing · no data upload', xmlTitle: 'XML format', xmlOk: 'The XML is well-formed and uses a pain.001 namespace.', xsdTitle: 'XSD schema', xsdPending: 'Checking the exact structure…', xsdOk: 'The document conforms to schema {0}.', xsdInvalid: 'XSD found {0} errors.', xsdUnsupported: 'No verified XSD is bundled for version {0} yet. The data is still shown.', xsdUnavailable: 'The validation engine could not be loaded.', bankTitle: 'Bank rules', bankOff: 'No bank profile is selected.', bankOk: 'All rules in the selected profile passed.', bankProblems: '{0} errors · {1} warnings', noProfile: 'No bank profile', source: 'Rules source', effective: 'effective from', noFindings: 'The checks found no problems.', messageId: 'Message ID', created: 'Created', transactions: 'Transactions', total: 'Total', namespace: 'Namespace / version', initiatingParty: 'Initiating party', declaredTransactions: 'Declared transactions', controlSum: 'Control sum', paymentGroup: 'Payment group', method: 'Method', serviceLevel: 'Service level', executionDate: 'Execution date', debtor: 'Debtor', debtorAccount: 'Debtor account', debtorAgent: 'Debtor agent', creditor: 'Creditor', creditorAccount: 'Creditor account', creditorAgent: 'Creditor agent', amount: 'Amount', endToEnd: 'EndToEnd ID', instructionId: 'Instruction ID', purpose: 'Purpose', remittance: 'Remittance information', address: 'Address', path: 'XML path', value: 'Value', filter: 'Filter path or value…', copyXml: 'Copy XML', copied: 'Copied', empty: 'not provided', fileTooLarge: 'The file is larger than the 10 MB limit.', doctype: 'XML containing a DOCTYPE declaration is not supported for security reasons.', invalidXml: 'The file is not valid XML.', invalidRoot: 'The root element must be Document.', invalidNamespace: 'The file does not use an ISO 20022 pain.001 namespace.', missingInitiation: 'CstmrCdtTrfInitn is missing from the document.', readError: 'The file could not be read.', validationError: 'XSD validation could not be completed.', theme: 'Toggle light/dark theme', size: 'Size', profileVersionNote: 'Bank rules are separate from XSD validation and never change the loaded data.', profileAuto: 'The profile was selected automatically from the debtor-agent BIC: {0}.'
     },
     de: {
-      headline: 'Zahlungsauftrag vor dem Bankimport prüfen', intro: 'Die Datei wird vollständig in Ihrem Browser angezeigt und geprüft. Sie wird nicht hochgeladen.', dropTitle: 'pain.001-Datei auswählen', dropText: 'XML hier ablegen oder vom Gerät auswählen.', chooseFile: 'XML auswählen', privacy: 'Nur lokale Verarbeitung · maximal 10 MB', loadAnother: 'Andere Datei laden', checks: 'Prüfungen', validationTitle: 'Validierungsergebnis', bankProfile: 'Bankregeln', loadedData: 'Geladene Daten', documentContent: 'Auftragsinhalt', tabOverview: 'Übersicht', tabPayments: 'Zahlungen', tabFields: 'Alle Daten', tabXml: 'XML', footer: 'Private Verarbeitung im Browser · kein Datenupload', xmlTitle: 'XML-Format', xmlOk: 'Das XML ist wohlgeformt und verwendet einen pain.001-Namespace.', xsdTitle: 'XSD-Schema', xsdPending: 'Die genaue Struktur wird geprüft…', xsdOk: 'Das Dokument entspricht dem Schema {0}.', xsdInvalid: 'XSD hat {0} Fehler gefunden.', xsdUnsupported: 'Für Version {0} ist noch kein geprüftes XSD enthalten. Die Daten werden trotzdem angezeigt.', xsdUnavailable: 'Die Validierungs-Engine konnte nicht geladen werden.', bankTitle: 'Bankregeln', bankOff: 'Es ist kein Bankprofil ausgewählt.', bankOk: 'Alle Regeln des ausgewählten Profils wurden erfüllt.', bankProblems: '{0} Fehler · {1} Warnungen', noProfile: 'Kein Bankprofil', source: 'Regelquelle', effective: 'gültig ab', noFindings: 'Die Prüfungen haben keine Probleme gefunden.', messageId: 'Nachrichten-ID', created: 'Erstellt', transactions: 'Transaktionen', total: 'Summe', namespace: 'Namespace / Version', initiatingParty: 'Initiierende Partei', declaredTransactions: 'Deklarierte Transaktionen', controlSum: 'Kontrollsumme', paymentGroup: 'Zahlungsgruppe', method: 'Methode', serviceLevel: 'Service-Level', executionDate: 'Ausführungsdatum', debtor: 'Zahlungspflichtiger', debtorAccount: 'Konto des Zahlers', debtorAgent: 'Bank des Zahlers', creditor: 'Zahlungsempfänger', creditorAccount: 'Empfängerkonto', creditorAgent: 'Bank des Empfängers', amount: 'Betrag', endToEnd: 'EndToEnd-ID', instructionId: 'Instruction-ID', purpose: 'Zweck', remittance: 'Verwendungszweck', address: 'Adresse', path: 'XML-Pfad', value: 'Wert', filter: 'Pfad oder Wert filtern…', copyXml: 'XML kopieren', copied: 'Kopiert', empty: 'nicht angegeben', fileTooLarge: 'Die Datei überschreitet die Grenze von 10 MB.', doctype: 'XML mit DOCTYPE-Deklaration wird aus Sicherheitsgründen nicht unterstützt.', invalidXml: 'Die Datei ist kein gültiges XML.', invalidRoot: 'Das Wurzelelement muss Document sein.', invalidNamespace: 'Die Datei verwendet keinen ISO-20022-pain.001-Namespace.', missingInitiation: 'CstmrCdtTrfInitn fehlt im Dokument.', readError: 'Die Datei konnte nicht gelesen werden.', validationError: 'Die XSD-Validierung konnte nicht abgeschlossen werden.', theme: 'Helles/dunkles Design umschalten', size: 'Größe', profileVersionNote: 'Bankregeln sind von der XSD-Validierung getrennt und ändern nie die geladenen Daten.'
+      headline: 'Zahlungsauftrag vor dem Bankimport prüfen', intro: 'Die Datei wird vollständig in Ihrem Browser angezeigt und geprüft. Sie wird nicht hochgeladen.', dropTitle: 'pain.001-Datei auswählen', dropText: 'XML hier ablegen oder vom Gerät auswählen.', chooseFile: 'XML auswählen', privacy: 'Nur lokale Verarbeitung · maximal 10 MB', loadAnother: 'Andere Datei laden', checks: 'Prüfungen', validationTitle: 'Validierungsergebnis', bankProfile: 'Bankregeln', loadedData: 'Geladene Daten', documentContent: 'Auftragsinhalt', tabOverview: 'Übersicht', tabPayments: 'Zahlungen', tabFields: 'Alle Daten', tabXml: 'XML', footer: 'Private Verarbeitung im Browser · kein Datenupload', xmlTitle: 'XML-Format', xmlOk: 'Das XML ist wohlgeformt und verwendet einen pain.001-Namespace.', xsdTitle: 'XSD-Schema', xsdPending: 'Die genaue Struktur wird geprüft…', xsdOk: 'Das Dokument entspricht dem Schema {0}.', xsdInvalid: 'XSD hat {0} Fehler gefunden.', xsdUnsupported: 'Für Version {0} ist noch kein geprüftes XSD enthalten. Die Daten werden trotzdem angezeigt.', xsdUnavailable: 'Die Validierungs-Engine konnte nicht geladen werden.', bankTitle: 'Bankregeln', bankOff: 'Es ist kein Bankprofil ausgewählt.', bankOk: 'Alle Regeln des ausgewählten Profils wurden erfüllt.', bankProblems: '{0} Fehler · {1} Warnungen', noProfile: 'Kein Bankprofil', source: 'Regelquelle', effective: 'gültig ab', noFindings: 'Die Prüfungen haben keine Probleme gefunden.', messageId: 'Nachrichten-ID', created: 'Erstellt', transactions: 'Transaktionen', total: 'Summe', namespace: 'Namespace / Version', initiatingParty: 'Initiierende Partei', declaredTransactions: 'Deklarierte Transaktionen', controlSum: 'Kontrollsumme', paymentGroup: 'Zahlungsgruppe', method: 'Methode', serviceLevel: 'Service-Level', executionDate: 'Ausführungsdatum', debtor: 'Zahlungspflichtiger', debtorAccount: 'Konto des Zahlers', debtorAgent: 'Bank des Zahlers', creditor: 'Zahlungsempfänger', creditorAccount: 'Empfängerkonto', creditorAgent: 'Bank des Empfängers', amount: 'Betrag', endToEnd: 'EndToEnd-ID', instructionId: 'Instruction-ID', purpose: 'Zweck', remittance: 'Verwendungszweck', address: 'Adresse', path: 'XML-Pfad', value: 'Wert', filter: 'Pfad oder Wert filtern…', copyXml: 'XML kopieren', copied: 'Kopiert', empty: 'nicht angegeben', fileTooLarge: 'Die Datei überschreitet die Grenze von 10 MB.', doctype: 'XML mit DOCTYPE-Deklaration wird aus Sicherheitsgründen nicht unterstützt.', invalidXml: 'Die Datei ist kein gültiges XML.', invalidRoot: 'Das Wurzelelement muss Document sein.', invalidNamespace: 'Die Datei verwendet keinen ISO-20022-pain.001-Namespace.', missingInitiation: 'CstmrCdtTrfInitn fehlt im Dokument.', readError: 'Die Datei konnte nicht gelesen werden.', validationError: 'Die XSD-Validierung konnte nicht abgeschlossen werden.', theme: 'Helles/dunkles Design umschalten', size: 'Größe', profileVersionNote: 'Bankregeln sind von der XSD-Validierung getrennt und ändern nie die geladenen Daten.', profileAuto: 'Das Profil wurde automatisch anhand des BIC der Bank des Zahlers ausgewählt: {0}.'
     }
+  };
+
+  const xsdText = {
+    cs: {
+      invalidValue: 'Pole „{0}“ obsahuje neplatnou hodnotu „{1}“. {2}', missingAttribute: 'V poli „{0}“ chybí povinný atribut „{1}“.', unexpectedElement: 'Pole „{0}“ je na tomto místě neočekávané. Očekává se „{1}“; zkontrolujte také pořadí elementů.', missingElement: 'V části „{0}“ chybí povinné pole „{1}“.', pattern: 'Pole „{0}“ obsahuje hodnotu „{1}“ v neplatném formátu. Očekávaný vzor: {2}.', technical: 'Technický detail', generic: 'XSD kontrola našla problém: {0}', noHint: 'Hodnota neodpovídá datovému typu {0}.',
+      fields: { CreDtTm: 'Vytvořeno', MsgId: 'ID zprávy', NbOfTxs: 'Počet transakcí', CtrlSum: 'Kontrolní součet', ReqdExctnDt: 'Datum provedení', InstdAmt: 'Částka', EndToEndId: 'EndToEnd ID', Ccy: 'Měna', IBAN: 'IBAN', BIC: 'BIC', BICFI: 'BIC' },
+      hints: { ISODateTime: 'Očekává se datum a čas ISO 8601, např. 2026-09-29T10:30:00.', ISODate: 'Očekává se datum ve formátu RRRR-MM-DD, např. 2026-09-29.', ActiveOrHistoricCurrencyCode: 'Očekává se třípísmenný kód měny, např. EUR.', IBAN2007Identifier: 'Očekává se platný IBAN bez mezer.', Max35Text: 'Text musí mít nejvýše 35 znaků.' },
+    },
+    sk: {
+      invalidValue: 'Pole „{0}“ obsahuje neplatnú hodnotu „{1}“. {2}', missingAttribute: 'V poli „{0}“ chýba povinný atribút „{1}“.', unexpectedElement: 'Pole „{0}“ je na tomto mieste neočakávané. Očakáva sa „{1}“; skontrolujte aj poradie elementov.', missingElement: 'V časti „{0}“ chýba povinné pole „{1}“.', pattern: 'Pole „{0}“ obsahuje hodnotu „{1}“ v neplatnom formáte. Očakávaný vzor: {2}.', technical: 'Technický detail', generic: 'XSD kontrola našla problém: {0}', noHint: 'Hodnota nezodpovedá dátovému typu {0}.',
+      fields: { CreDtTm: 'Vytvorené', MsgId: 'ID správy', NbOfTxs: 'Počet transakcií', CtrlSum: 'Kontrolný súčet', ReqdExctnDt: 'Dátum vykonania', InstdAmt: 'Suma', EndToEndId: 'EndToEnd ID', Ccy: 'Mena', IBAN: 'IBAN', BIC: 'BIC', BICFI: 'BIC' },
+      hints: { ISODateTime: 'Očakáva sa dátum a čas ISO 8601, napr. 2026-09-29T10:30:00.', ISODate: 'Očakáva sa dátum vo formáte RRRR-MM-DD, napr. 2026-09-29.', ActiveOrHistoricCurrencyCode: 'Očakáva sa trojpísmenový kód meny, napr. EUR.', IBAN2007Identifier: 'Očakáva sa platný IBAN bez medzier.', Max35Text: 'Text môže mať najviac 35 znakov.' },
+    },
+    en: {
+      invalidValue: 'The “{0}” field contains an invalid value, “{1}”. {2}', missingAttribute: 'The required “{1}” attribute is missing from “{0}”.', unexpectedElement: 'The “{0}” field is not expected here. “{1}” is expected; also check the element order.', missingElement: 'The required “{1}” field is missing from “{0}”.', pattern: 'The “{0}” field contains “{1}” in an invalid format. Expected pattern: {2}.', technical: 'Technical detail', generic: 'XSD validation found a problem: {0}', noHint: 'The value does not match the {0} data type.',
+      fields: { CreDtTm: 'Created', MsgId: 'Message ID', NbOfTxs: 'Transaction count', CtrlSum: 'Control sum', ReqdExctnDt: 'Execution date', InstdAmt: 'Amount', EndToEndId: 'EndToEnd ID', Ccy: 'Currency', IBAN: 'IBAN', BIC: 'BIC', BICFI: 'BIC' },
+      hints: { ISODateTime: 'An ISO 8601 date and time is expected, for example 2026-09-29T10:30:00.', ISODate: 'A YYYY-MM-DD date is expected, for example 2026-09-29.', ActiveOrHistoricCurrencyCode: 'A three-letter currency code is expected, for example EUR.', IBAN2007Identifier: 'A valid IBAN without spaces is expected.', Max35Text: 'The text may contain at most 35 characters.' },
+    },
+    de: {
+      invalidValue: 'Das Feld „{0}“ enthält den ungültigen Wert „{1}“. {2}', missingAttribute: 'Im Feld „{0}“ fehlt das erforderliche Attribut „{1}“.', unexpectedElement: 'Das Feld „{0}“ wird an dieser Stelle nicht erwartet. Erwartet wird „{1}“; prüfen Sie auch die Reihenfolge der Elemente.', missingElement: 'Im Abschnitt „{0}“ fehlt das erforderliche Feld „{1}“.', pattern: 'Das Feld „{0}“ enthält den Wert „{1}“ in einem ungültigen Format. Erwartetes Muster: {2}.', technical: 'Technisches Detail', generic: 'Die XSD-Prüfung hat ein Problem gefunden: {0}', noHint: 'Der Wert entspricht nicht dem Datentyp {0}.',
+      fields: { CreDtTm: 'Erstellt', MsgId: 'Nachrichten-ID', NbOfTxs: 'Transaktionsanzahl', CtrlSum: 'Kontrollsumme', ReqdExctnDt: 'Ausführungsdatum', InstdAmt: 'Betrag', EndToEndId: 'EndToEnd-ID', Ccy: 'Währung', IBAN: 'IBAN', BIC: 'BIC', BICFI: 'BIC' },
+      hints: { ISODateTime: 'Erwartet wird Datum und Uhrzeit nach ISO 8601, z. B. 2026-09-29T10:30:00.', ISODate: 'Erwartet wird ein Datum im Format JJJJ-MM-TT, z. B. 2026-09-29.', ActiveOrHistoricCurrencyCode: 'Erwartet wird ein dreistelliger Währungscode, z. B. EUR.', IBAN2007Identifier: 'Erwartet wird eine gültige IBAN ohne Leerzeichen.', Max35Text: 'Der Text darf höchstens 35 Zeichen enthalten.' },
+    },
   };
 
   const state = {
@@ -25,7 +49,9 @@
     xmlText: '',
     model: null,
     xsd: null,
-    selectedProfileId: profiles[0] ? profiles[0].id : '',
+    selectedProfileId: '',
+    profileSelectionSource: '',
+    detectedDebtorBic: '',
     bankFindings: [],
     validationToken: 0,
   };
@@ -39,9 +65,23 @@
 
   function readLanguage() {
     const requested = new URLSearchParams(location.search).get('language');
-    if (languages.includes(requested)) return requested;
+    if (languages.includes(requested)) {
+      writeLanguageCookie(requested);
+      return requested;
+    }
+    const saved = document.cookie.split(';')
+      .map((item) => item.trim())
+      .find((item) => item.startsWith(`${languageCookieName}=`));
+    if (saved) {
+      const value = decodeURIComponent(saved.slice(languageCookieName.length + 1));
+      if (languages.includes(value)) return value;
+    }
     const browser = (navigator.language || 'cs').slice(0, 2).toLowerCase();
     return languages.includes(browser) ? browser : 'cs';
+  }
+
+  function writeLanguageCookie(language) {
+    document.cookie = `${languageCookieName}=${encodeURIComponent(language)}; Max-Age=31536000; Path=/; SameSite=Lax`;
   }
 
   function t(key, ...values) {
@@ -60,6 +100,30 @@
   function localized(value) {
     if (!value || typeof value === 'string') return value || '';
     return value[state.language] || value.en || value.cs || Object.values(value)[0] || '';
+  }
+
+  function xsdFormat(template, ...values) {
+    return String(template).replace(/\{(\d+)\}/g, (_, index) => values[Number(index)] ?? '');
+  }
+
+  function xsdFieldName(name) {
+    const dictionary = xsdText[state.language] || xsdText.en;
+    const label = dictionary.fields[name];
+    return label ? `${label} (${name})` : name;
+  }
+
+  function friendlyXsdMessage(rawMessage) {
+    const dictionary = xsdText[state.language] || xsdText.en;
+    const parsed = core.parseXsdError(rawMessage);
+    if (parsed.kind === 'invalidValue') {
+      const hint = dictionary.hints[parsed.type] || xsdFormat(dictionary.noHint, parsed.type);
+      return xsdFormat(dictionary.invalidValue, xsdFieldName(parsed.element), parsed.value, hint);
+    }
+    if (parsed.kind === 'missingAttribute') return xsdFormat(dictionary.missingAttribute, xsdFieldName(parsed.element), parsed.attribute);
+    if (parsed.kind === 'unexpectedElement') return xsdFormat(dictionary.unexpectedElement, xsdFieldName(parsed.element), xsdFieldName(parsed.expected));
+    if (parsed.kind === 'missingElement') return xsdFormat(dictionary.missingElement, xsdFieldName(parsed.element), xsdFieldName(parsed.expected));
+    if (parsed.kind === 'pattern') return xsdFormat(dictionary.pattern, xsdFieldName(parsed.element), parsed.value, parsed.pattern);
+    return xsdFormat(dictionary.generic, parsed.cleaned || parsed.raw);
   }
 
   function formatBytes(size) {
@@ -141,7 +205,10 @@
     const errors = state.bankFindings.filter((item) => item.severity === 'error').length;
     const warnings = state.bankFindings.filter((item) => item.severity === 'warning').length;
     setStatus(elements.bankStatus, errors ? 'invalid' : warnings ? 'warning' : 'valid', localized(profile.label), errors || warnings ? t('bankProblems', errors, warnings) : t('bankOk'));
-    elements.profileSource.innerHTML = `${escapeHtml(t('source'))}: <a href="${escapeHtml(profile.source.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(profile.source.title)}</a> · ${escapeHtml(t('effective'))} ${escapeHtml(profile.source.effectiveFrom)}`;
+    const automaticNote = state.profileSelectionSource === 'auto' && state.detectedDebtorBic
+      ? `<strong>${escapeHtml(t('profileAuto', state.detectedDebtorBic))}</strong> `
+      : '';
+    elements.profileSource.innerHTML = `${automaticNote}${escapeHtml(t('source'))}: <a href="${escapeHtml(profile.source.url)}" target="_blank" rel="noopener noreferrer">${escapeHtml(profile.source.title)}</a> · ${escapeHtml(t('effective'))} ${escapeHtml(profile.source.effectiveFrom)}`;
   }
 
   function renderFindings() {
@@ -150,7 +217,8 @@
       state.xsd.errors.forEach((error, index) => findings.push({
         ruleId: `XSD-${index + 1}`,
         severity: 'error',
-        message: error.message,
+        message: friendlyXsdMessage(error.message),
+        technicalMessage: error.message,
         path: error.line ? `line ${error.line}${error.column ? `:${error.column}` : ''}` : '',
       }));
     }
@@ -161,7 +229,10 @@
     }
     elements.findings.innerHTML = findings.map((finding) => {
       const meta = [finding.path, finding.paymentId ? `${t('paymentGroup')}: ${finding.paymentId}` : '', finding.transactionId ? `${t('endToEnd')}: ${finding.transactionId}` : ''].filter(Boolean);
-      return `<article class="finding finding-${escapeHtml(finding.severity)}"><span class="finding-badge">${escapeHtml(finding.ruleId)}</span><p>${escapeHtml(localized(finding.message))}</p>${meta.length ? `<div class="finding-meta">${meta.map((item) => `<span>${escapeHtml(item)}</span>`).join('')}</div>` : ''}</article>`;
+      const technical = finding.technicalMessage
+        ? `<details class="finding-technical"><summary>${escapeHtml((xsdText[state.language] || xsdText.en).technical)}</summary><code>${escapeHtml(finding.technicalMessage)}</code></details>`
+        : '';
+      return `<article class="finding finding-${escapeHtml(finding.severity)}"><span class="finding-badge">${escapeHtml(finding.ruleId)}</span><div><p>${escapeHtml(localized(finding.message))}</p>${technical}</div>${meta.length ? `<div class="finding-meta">${meta.map((item) => `<span>${escapeHtml(item)}</span>`).join('')}</div>` : ''}</article>`;
     }).join('');
   }
 
@@ -199,7 +270,7 @@
   function transactionHtml(transaction) {
     const creditorName = transaction.creditor && transaction.creditor.name || t('empty');
     const amountText = formatAmount(transaction.amount.value, transaction.amount.currency);
-    return `<details class="transaction"><summary><span class="transaction-title">${escapeHtml(transaction.endToEndId || transaction.instructionId || `#${transaction.index}`)}</span><span class="transaction-party">${escapeHtml(creditorName)}</span><span class="transaction-amount">${escapeHtml(amountText)}</span></summary><div class="transaction-body">${definitionList([
+    return `<details class="transaction" open><summary><span class="transaction-title">${escapeHtml(transaction.endToEndId || transaction.instructionId || `#${transaction.index}`)}</span><span class="transaction-party">${escapeHtml(creditorName)}</span><span class="transaction-amount">${escapeHtml(amountText)}</span></summary><div class="transaction-body">${definitionList([
       [t('endToEnd'), transaction.endToEndId],
       [t('instructionId'), transaction.instructionId],
       [t('amount'), amountText],
@@ -293,6 +364,11 @@
       state.file = file;
       state.xmlText = xmlText;
       state.model = model;
+      const detectedProfile = core.detectBankProfile(model, profiles);
+      state.selectedProfileId = detectedProfile ? detectedProfile.id : '';
+      state.profileSelectionSource = detectedProfile ? 'auto' : '';
+      state.detectedDebtorBic = model.groups.map((group) => group.debtorAgent && group.debtorAgent.bic).find(Boolean) || '';
+      elements.bankProfile.value = state.selectedProfileId;
       state.xsd = { status: 'pending', errors: [] };
       const token = ++state.validationToken;
       elements.workspace.hidden = false;
@@ -326,6 +402,9 @@
     state.model = null;
     state.xsd = null;
     state.bankFindings = [];
+    state.selectedProfileId = '';
+    state.profileSelectionSource = '';
+    state.detectedDebtorBic = '';
     elements.fileInput.value = '';
     elements.workspace.hidden = true;
     elements.dropZone.hidden = false;
@@ -362,9 +441,14 @@
   elements.dropZone.addEventListener('drop', (event) => loadFile(event.dataTransfer.files[0]));
   elements.loadAnother.addEventListener('click', reset);
   elements.themeToggle.addEventListener('click', toggleTheme);
-  elements.language.addEventListener('change', () => { state.language = elements.language.value; applyTranslations(); });
+  elements.language.addEventListener('change', () => {
+    state.language = elements.language.value;
+    writeLanguageCookie(state.language);
+    applyTranslations();
+  });
   elements.bankProfile.addEventListener('change', () => {
     state.selectedProfileId = elements.bankProfile.value;
+    state.profileSelectionSource = 'manual';
     runBankValidation();
     renderStatuses();
     renderFindings();

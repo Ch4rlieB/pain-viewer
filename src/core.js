@@ -285,6 +285,65 @@
     };
   }
 
+  function normalizeBic(value) {
+    return String(value || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+  }
+
+  function bicMatches(actual, configured) {
+    const actualBic = normalizeBic(actual);
+    const configuredBic = normalizeBic(configured);
+    if (actualBic.length < 8 || configuredBic.length < 8) return false;
+    return actualBic === configuredBic || actualBic.slice(0, 8) === configuredBic.slice(0, 8);
+  }
+
+  function detectBankProfile(model, profiles) {
+    const debtorBics = Array.from(new Set((model && model.groups || [])
+      .map((group) => normalizeBic(group.debtorAgent && group.debtorAgent.bic))
+      .filter(Boolean)));
+    if (!debtorBics.length) return null;
+
+    let detectedProfile = null;
+    for (const debtorBic of debtorBics) {
+      const matches = (profiles || []).filter((profile) => {
+        const configuredBics = profile.detection && profile.detection.debtorAgentBics || [];
+        return configuredBics.some((configuredBic) => bicMatches(debtorBic, configuredBic));
+      });
+      if (matches.length !== 1) return null;
+      if (detectedProfile && detectedProfile.id !== matches[0].id) return null;
+      detectedProfile = matches[0];
+    }
+    return detectedProfile;
+  }
+
+  function xsdLocalName(value) {
+    const match = /\}([^}]+)$/.exec(String(value || ''));
+    return match ? match[1] : String(value || '').replace(/^.*:/, '');
+  }
+
+  function parseXsdError(rawMessage) {
+    const raw = String(rawMessage || '').replace(/^Schemas validity error\s*:\s*/i, '').trim();
+    let match = /^Element '([^']+)': '([^']*)' is not a valid value of the atomic type '([^']+)'\.?$/.exec(raw);
+    if (match) return { kind: 'invalidValue', element: xsdLocalName(match[1]), value: match[2], type: xsdLocalName(match[3]), raw };
+
+    match = /^Element '([^']+)': The attribute '([^']+)' is required but missing\.?$/.exec(raw);
+    if (match) return { kind: 'missingAttribute', element: xsdLocalName(match[1]), attribute: match[2], raw };
+
+    match = /^Element '([^']+)': This element is not expected\. Expected is \( (.+) \)\.?$/.exec(raw);
+    if (match) return { kind: 'unexpectedElement', element: xsdLocalName(match[1]), expected: xsdLocalName(match[2].split(/[ ,]/)[0].replace(/[()]/g, '')), raw };
+
+    match = /^Element '([^']+)': Missing child element\(s\)\. Expected is \( (.+) \)\.?$/.exec(raw);
+    if (match) return { kind: 'missingElement', element: xsdLocalName(match[1]), expected: xsdLocalName(match[2].split(/[ ,]/)[0].replace(/[()]/g, '')), raw };
+
+    match = /^Element '([^']+)': \[facet 'pattern'\] The value '([^']*)' is not accepted by the pattern '([^']+)'\.?$/.exec(raw);
+    if (match) return { kind: 'pattern', element: xsdLocalName(match[1]), value: match[2], pattern: match[3], raw };
+
+    return {
+      kind: 'generic',
+      raw,
+      cleaned: raw.replace(/\{urn:iso:std:iso:20022:tech:xsd:pain\.[^}]+\}/g, ''),
+    };
+  }
+
   function formatXml(xml) {
     const parser = new DOMParser();
     const documentNode = parser.parseFromString(xml, 'application/xml');
@@ -325,8 +384,11 @@
     child,
     children,
     formatXml,
+    detectBankProfile,
     indexedPath,
     localName,
+    normalizeBic,
+    parseXsdError,
     parseAddress,
     parseDocument,
     text,

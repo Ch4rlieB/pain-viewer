@@ -18,12 +18,12 @@
       <ReqdExctnDt>2026-10-01</ReqdExctnDt>
       <Dbtr><Nm>Demo s.r.o.</Nm></Dbtr>
       <DbtrAcct><Id><IBAN>SK3112000000198742637541</IBAN></Id></DbtrAcct>
-      <DbtrAgt><FinInstnId><BIC>TATRSKBX</BIC></FinInstnId></DbtrAgt>
+      <DbtrAgt><FinInstnId><BIC>KOMASK2X</BIC></FinInstnId></DbtrAgt>
       <ChrgBr>SLEV</ChrgBr>
       <CdtTrfTxInf>
         <PmtId><InstrId>INSTR-001</InstrId><EndToEndId>E2E-001</EndToEndId></PmtId>
         <Amt><InstdAmt Ccy="EUR">125.50</InstdAmt></Amt>
-        <CdtrAgt><FinInstnId><BIC>KOMASK2X</BIC></FinInstnId></CdtrAgt>
+        <CdtrAgt><FinInstnId><BIC>TATRSKBX</BIC></FinInstnId></CdtrAgt>
         <Cdtr>
           <Nm>Example Supplier s.r.o.</Nm>
           <PstlAdr>

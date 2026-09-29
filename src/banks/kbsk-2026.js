@@ -257,6 +257,9 @@
       url: 'https://www.kb.cz/getmedia/32b8497e-92b2-49cc-ac8a-c5b4e4b0e8b2/kbsk_format_xml_iniciace_.pdf',
       effectiveFrom: '2026-06-20',
     },
+    detection: {
+      debtorAgentBics: ['KOMASK2X'],
+    },
     supportedNamespaces: NAMESPACES,
     validate,
   };
