@@ -31,6 +31,18 @@ python3 -m http.server 8080 --directory dist
 Then open <http://localhost:8080>. The generated `dist/` directory is the only
 directory that needs to be copied to the web server.
 
+## GitHub Pages
+
+Every push to `main` also runs the tests, builds `dist/` and deploys it with
+GitHub Actions. After GitHub Pages is configured to use **GitHub Actions** as
+its source in the repository settings, the public site is available at:
+
+<https://ch4rlieb.github.io/pain-viewer/>
+
+The deployment can also be started manually from the **Actions** tab by running
+the *Deploy to GitHub Pages* workflow. The generated `dist/` directory remains
+ignored by Git and is transferred only as a deployment artifact.
+
 ## Validation layers
 
 The application deliberately keeps these results separate:
